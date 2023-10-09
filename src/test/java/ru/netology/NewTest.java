@@ -1,4 +1,5 @@
 package ru.netology;
+
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
@@ -9,7 +10,6 @@ import org.openqa.selenium.chrome.ChromeOptions;
 public class NewTest {
     private WebDriver driver;
     ChromeOptions options;
-
 
 
     @BeforeAll
@@ -57,8 +57,9 @@ public class NewTest {
         String actual = driver.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub")).getText().trim();
         Assertions.assertEquals(expected, actual);
     }
+
     @Test
-    void shouldBeBagWihtShortNumberPhone() {
+    void shouldBeBagWithShortNumberPhone() {
         driver.get("http://localhost:9999");
         driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Иванов Иван");
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+7939822921");
@@ -68,8 +69,9 @@ public class NewTest {
         String actual = driver.findElement(By.cssSelector("[data-test-id='phone'].input_invalid .input__sub")).getText().trim();
         Assertions.assertEquals(expected, actual);
     }
+
     @Test
-    void shouldBeBagWihtoutName() {
+    void shouldBeBagWithoutName() {
         driver.get("http://localhost:9999");
         driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("");
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+7939822921");
@@ -79,8 +81,9 @@ public class NewTest {
         String actual = driver.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub")).getText().trim();
         Assertions.assertEquals(expected, actual);
     }
+
     @Test
-    void shouldBeBagWihtoutNumberPhone() {
+    void shouldBeBagWithoutNumberPhone() {
         driver.get("http://localhost:9999");
         driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Иванов Иван");
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("");
@@ -91,17 +94,16 @@ public class NewTest {
         Assertions.assertEquals(expected, actual);
     }
 
-     //   @Test
-    //  void shouldBeBagWihtoutAgreement() {
-    //      driver.get("http://localhost:9999");
-    //       driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Иванов Иван");
-    //      driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+7939822921");
+    @Test
+    void shouldBeBagWihtoutAgreement() {
+        driver.get("http://localhost:9999");
+        driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Иванов Иван");
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79398220921");
+        driver.findElement(By.tagName("button")).click();
+        String expected = "Я соглашаюсь с условиями обработки и использования моих персональных данных и разрешаю сделать запрос в бюро кредитных историй";
+        String actual = driver.findElement(By.className("checkbox__text.input_invalid .input__sub")).getText().trim();
 
-    //     driver.findElement(By.tagName("button")).click();
-    //    String expected = "Я соглашаюсь с условиями обработки и использования моих персональных данных и разрешаю сделать запрос в бюро кредитных историй";
-    //    String actual = driver.findElement(By.className("checkbox__text.input_invalid .input__sub")).getText().trim();
-
-    //    Assertions.assertEquals(expected, actual);
-  //  }
+        Assertions.assertEquals(expected, actual);
+    }
 }
 
