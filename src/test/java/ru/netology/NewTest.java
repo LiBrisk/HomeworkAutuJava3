@@ -1,94 +1,66 @@
 package ru.netology;
 
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.open;
+
+import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class NewTest {
-    static {
-        Configuration.browser = "chrome";
 
+    @BeforeEach
+    void openPage() {
+        open("http://localhost:9999");
     }
-    static void setUpAll() {
 
-        getWebDriver().manage().window().maximize();
-    }
     @Test
     void shouldBeSuccessfullResalt() {
-        open("http://localhost:9999");
-        $("[data-test-id='name'] input").setValue("Иванов Иван");
-        $("[data-test-id='phone'] input").setValue("+79398229211");
-        $("[data-test-id='agreement']").click();
-        $("button").click();
-
-        String expected = "Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.";
-        String actual = $("[data-test-id='order-success']").getText().trim();
-        assertEquals(expected, actual);
+        preconditions("Иванов Иван", "+79398229211");
+        $("[data-test-id='order-success']").shouldHave(Condition.text("Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время."));
     }
 
     @Test
     void shouldBeBagWithNameWithNumber() {
-        open("http://localhost:9999");
-        $("[data-test-id='name'] input").setValue("Иванов 1234");
-        $("[data-test-id='phone'] input").setValue("+79398229211");
-        $("[data-test-id='agreement']").click();
-        $(By.tagName("button")).click();
-        String expected = "Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.";
-        String actual = $("[data-test-id='name'].input_invalid .input__sub").getText().trim();
-        assertEquals(expected, actual);
+        preconditions("Иванов 1234", "+79398229211");
+        $("[data-test-id='name'].input_invalid .input__sub").shouldHave(Condition.text("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
     }
 
     @Test
     void shouldBeBagWithShortNumberPhone() {
-        open("http://localhost:9999");
-        $("[data-test-id='name'] input").setValue("Иванов Иван");
-        $("[data-test-id='phone'] input").setValue("+7939822921");
-        $("[data-test-id='agreement']").click();
-        $(By.tagName("button")).click();
-        String expected = "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
-        String actual = $("[data-test-id='phone'].input_invalid .input__sub").getText().trim();
-        assertEquals(expected, actual);
+        preconditions("Иванов Иван", "+7939822921");
+        $("[data-test-id='phone'].input_invalid .input__sub").shouldHave(Condition.text("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
     }
 
     @Test
     void shouldBeBagWithoutName() {
-        open("http://localhost:9999");
-        $("[data-test-id='name'] input").setValue("");
-        $("[data-test-id='phone'] input").setValue("+7939822921");
-        $("[data-test-id='agreement']").click();
-        $(By.tagName("button")).click();
-        String expected = "Поле обязательно для заполнения";
-        String actual = $("[data-test-id='name'].input_invalid .input__sub").getText().trim();
-        assertEquals(expected, actual);
+        preconditions("", "+7939822921");
+        $("[data-test-id='name'].input_invalid .input__sub").shouldHave(Condition.text("Поле обязательно для заполнения"));
     }
 
     @Test
     void shouldBeBagWithoutNumberPhone() {
-        open("http://localhost:9999");
-        $("[data-test-id='name'] input").setValue("Иванов Иван");
-        $("[data-test-id='phone'] input").setValue("");
-        $("[data-test-id='agreement']").click();
-        $(By.tagName("button")).click();
-        String expected = "Поле обязательно для заполнения";
-        String actual = $("[data-test-id='phone'].input_invalid .input__sub").getText().trim();
-        assertEquals(expected, actual);
+        preconditions("Иванов Иван", "");
+        $("[data-test-id='phone'].input_invalid .input__sub").shouldHave(Condition.text("Поле обязательно для заполнения"));
     }
 
     @Test
     void shouldBeBagWihtoutAgreement() {
-        open("http://localhost:9999");
         $("[data-test-id='name'] input").setValue("Иванов Иван");
         $("[data-test-id='phone'] input").setValue("+79398220921");
         $(By.tagName("button")).click();
-        String expected = "Я соглашаюсь с условиями обработки и использования моих персональных данных и разрешаю сделать запрос в бюро кредитных историй";
-        String actual = $("checkbox__text.input_invalid .input__sub").getText().trim();
+        $x("//*[@class='checkbox__box']/..").shouldHave(Condition.text("Я соглашаюсь с условиями обработки и использования моих персональных данных и разрешаю сделать запрос в бюро кредитных историй"));
+    }
 
-        assertEquals(expected, actual);
+    private void preconditions(String name, String phone) {
+        $("[data-test-id='name'] input").setValue(name);
+        $("[data-test-id='phone'] input").setValue(phone);
+        $("[data-test-id='agreement']").click();
+        $(By.tagName("button")).click();
     }
 }
-
